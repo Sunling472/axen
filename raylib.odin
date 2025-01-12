@@ -104,19 +104,10 @@ Color :: rl.Color
 Rectangle :: rl.Rectangle
 
 Entity2D :: struct {
-	pos:       Vector2,
-	size:      Vector2,
-	color:     Color,
-	speed:     f32,
-	collision: EntityCollision,
-}
-
-EntityCollision :: enum {
-	None,
-	Top,
-	Bottom,
-	Left,
-	Right,
+	pos:   Vector2,
+	size:  Vector2,
+	color: Color,
+	speed: f32,
 }
 
 Animation :: struct {
@@ -199,6 +190,14 @@ MouseButtons :: enum (u32) {
 	LEFT   = u32(rl.MouseButton.LEFT),
 	MIDDLE = u32(rl.MouseButton.MIDDLE),
 	RIGHT  = u32(rl.MouseButton.RIGHT),
+}
+
+CollisionSide :: enum {
+	None,
+	Top,
+	Bottom,
+	Left,
+	Right,
 }
 
 ConfigFlags :: rl.ConfigFlags
@@ -358,8 +357,32 @@ is_entity_collision2d :: proc(e1, e2: Entity2D) -> bool {
 	return is_collision_rect(r1, r2)
 }
 
-set_collision_direction :: proc(e: ^Entity2D, d: EntityCollision) {
-	e.collision = d
+get_collision_side :: proc(e1, e2: Entity2D) -> CollisionSide {
+	if is_entity_collision2d(e1, e2) {
+		overlap_left := e1.pos.x + e1.size.x - e2.pos.x
+		overlap_right := e2.pos.x + e2.size.x - e1.pos.x
+		overlap_top := e1.pos.y + e1.size.y - e2.pos.y
+		overlap_bottom := e2.pos.y + e2.size.y - e1.pos.y
+
+		min_overlap_x := min(overlap_left, overlap_right)
+		min_overlap_y := min(overlap_top, overlap_bottom)
+
+		// Сравниваем наименьшие перекрытия по осям X и Y
+		if min_overlap_x < min_overlap_y {
+			if overlap_left > 0 && overlap_right > e2.size.x {
+				return .Right
+			} else {
+				return .Left
+			}
+		} else {
+			if overlap_top > 0 && overlap_bottom > e2.size.y {
+				return .Top
+			} else {
+				return .Bottom
+			}
+		}
+	}
+	return .None
 }
 
 get_collision_rect :: proc(rec1, rec2: Rectangle) -> Rectangle {
@@ -474,7 +497,14 @@ render_animation :: proc(
 		height = anim.frame_height,
 	}
 
-	rl.DrawTexturePro(anim.texture, source, dest, Vector2{0, 0}, rotation, WHITE)
+	rl.DrawTexturePro(
+		anim.texture,
+		source,
+		dest,
+		Vector2{0, 0},
+		rotation,
+		WHITE,
+	)
 }
 reset_animation :: proc(anim: ^Animation) {
 	anim.current_frame = anim.start_frame
@@ -508,7 +538,12 @@ render_texture :: proc(
 	rl.DrawTexturePro(
 		tex,
 		rl.Rectangle{0, 0, f32(tex.width), f32(tex.height)}, // Source rectangle (entire texture)
-		rl.Rectangle{tex_x, tex_y, f32(tex.width) * scale_x, f32(tex.height) * scale_y}, // Destination rectangle
+		rl.Rectangle {
+			tex_x,
+			tex_y,
+			f32(tex.width) * scale_x,
+			f32(tex.height) * scale_y,
+		}, // Destination rectangle
 		rl.Vector2{origin_x, origin_y}, // Rotation origin (center of the texture)
 		rotation,
 		WHITE,
@@ -539,7 +574,14 @@ render_sub_texture :: proc(
 		scale_y = 1.0
 	}
 
-	rl.DrawTexturePro(tex, src_rect, dest_rect, Vector2{origin_x, origin_y}, rotation, WHITE)
+	rl.DrawTexturePro(
+		tex,
+		src_rect,
+		dest_rect,
+		Vector2{origin_x, origin_y},
+		rotation,
+		WHITE,
+	)
 }
 
 render_text :: proc(
@@ -561,7 +603,12 @@ render_rect_filled_v :: proc(pos, size: Vector2, color: Color) {
 	rl.DrawRectangleV(pos, size, color)
 }
 
-render_rect_pro :: proc(rect: Rectangle, origin: Vector2, rotate: f32, color: Color) {
+render_rect_pro :: proc(
+	rect: Rectangle,
+	origin: Vector2,
+	rotate: f32,
+	color: Color,
+) {
 	rl.DrawRectanglePro(rect, origin, rotate, color)
 }
 
@@ -609,7 +656,10 @@ camera_follow :: proc(cam: ^Camera2D, target_x, target_y: f32) {
 	cam.target = Vector2{target_x, target_y}
 }
 
-camera_follow_lerp :: proc(cam: ^Camera2D, target_x, target_y, lerp_amount: f32) {
+camera_follow_lerp :: proc(
+	cam: ^Camera2D,
+	target_x, target_y, lerp_amount: f32,
+) {
 	desired_target := Vector2 {
 		target_x - (f32(rl.GetScreenWidth()) / 2) / cam.zoom,
 		target_y - (f32(rl.GetScreenHeight()) / f32(1.5)) / cam.zoom,
@@ -623,16 +673,31 @@ clamp_camera :: proc(cam: ^Camera2D, world_width, world_height: f32) {
 	half_screen_width := (f32(rl.GetScreenWidth()) / 2) / cam.zoom
 	half_screen_height := (f32(rl.GetScreenHeight()) / 2) / cam.zoom
 
-	cam.target.x = max(half_screen_width, min(cam.target.x, world_width - half_screen_width))
-	cam.target.y = max(half_screen_height, min(cam.target.y, world_height - half_screen_height))
+	cam.target.x = max(
+		half_screen_width,
+		min(cam.target.x, world_width - half_screen_width),
+	)
+	cam.target.y = max(
+		half_screen_height,
+		min(cam.target.y, world_height - half_screen_height),
+	)
 }
 
-clamp_camera_target :: proc(cam: ^Camera2D, target_x, target_y, world_width, world_height: f32) {
+clamp_camera_target :: proc(
+	cam: ^Camera2D,
+	target_x, target_y, world_width, world_height: f32,
+) {
 	half_screen_width := (f32(rl.GetScreenWidth()) / (2 * cam.zoom))
 	half_screen_height := (f32(rl.GetScreenHeight()) / (2 * cam.zoom))
 
-	cam.target.x = max(half_screen_width, min(target_x, world_width - half_screen_width))
-	cam.target.y = max(half_screen_height, min(target_y, world_height - half_screen_height))
+	cam.target.x = max(
+		half_screen_width,
+		min(target_x, world_width - half_screen_width),
+	)
+	cam.target.y = max(
+		half_screen_height,
+		min(target_y, world_height - half_screen_height),
+	)
 }
 
 disable_cursor :: proc() {
