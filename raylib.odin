@@ -584,7 +584,11 @@ render_sub_texture :: proc(
 	)
 }
 
-render_text :: proc(
+render_text :: proc(text: cstring, x, y, font_size: i32, color: Color) {
+	rl.DrawText(text, x, y, font_size, color)
+}
+
+render_text_ex :: proc(
 	font: Font,
 	text: cstring,
 	font_size: f32,
