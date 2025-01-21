@@ -128,12 +128,13 @@ Vector2 :: rl.Vector2
 
 Font :: rl.Font
 
-Audio :: rl.Sound
+Sound :: rl.Sound
 
 Music :: rl.Music
 
 // Enums
 Keys :: enum (u32) {
+	NULL          = u32(rl.KeyboardKey.KEY_NULL),
 	A             = u32(rl.KeyboardKey.A),
 	B             = u32(rl.KeyboardKey.B),
 	C             = u32(rl.KeyboardKey.C),
@@ -163,10 +164,12 @@ Keys :: enum (u32) {
 	LEFT_BRACKET  = u32(rl.KeyboardKey.LEFT_BRACKET),
 	RIGHT_BRACKET = u32(rl.KeyboardKey.RIGHT_BRACKET),
 	BACKSLASH     = u32(rl.KeyboardKey.BACKSLASH),
+	BACKSPACE     = u32(rl.KeyboardKey.BACKSPACE),
 	GRAVE         = u32(rl.KeyboardKey.GRAVE),
 	SPACE         = u32(rl.KeyboardKey.SPACE),
 	ESCAPE        = u32(rl.KeyboardKey.ESCAPE),
 	LSHIFT        = u32(rl.KeyboardKey.LEFT_SHIFT),
+	ENTER         = u32(rl.KeyboardKey.ENTER),
 	UP            = u32(rl.KeyboardKey.UP),
 	DOWN          = u32(rl.KeyboardKey.DOWN),
 	LEFT          = u32(rl.KeyboardKey.LEFT),
@@ -237,6 +240,10 @@ set_window_state :: proc(flags: ConfigFlags) {
 
 set_target_fps :: proc(fps: i32) {
 	rl.SetTargetFPS(fps)
+}
+
+set_exit_key :: proc(key: Keys) {
+	rl.SetExitKey(rl.KeyboardKey(key))
 }
 
 get_fps :: proc() -> i32 {
@@ -333,8 +340,16 @@ is_mouse_button_down :: proc(button: MouseButtons) -> bool {
 	return rl.IsMouseButtonDown(rl.MouseButton(button))
 }
 
+is_mouse_button_up :: proc(button: MouseButtons) -> bool {
+	return rl.IsMouseButtonUp(rl.MouseButton(button))
+}
+
 is_mouse_button_pressed :: proc(button: MouseButtons) -> bool {
 	return rl.IsMouseButtonPressed(rl.MouseButton(button))
+}
+
+is_mouse_button_released :: proc(button: MouseButtons) -> bool {
+	return rl.IsMouseButtonReleased(rl.MouseButton(button))
 }
 
 is_collision_rect :: proc(rect1, rect2: Rectangle) -> bool {
@@ -406,27 +421,39 @@ get_collision_entity2d :: proc(e1, e2: Entity2D) -> Rectangle {
 	return get_collision_rect(rect1, rect2)
 }
 
-load_audio :: proc(sound: cstring) -> Audio {
+load_sound :: proc(sound: cstring) -> Sound {
 	return rl.LoadSound(sound)
 }
 
-play_audio :: proc(audio: Audio) {
+play_sound :: proc(audio: Sound) {
 	rl.PlaySound(audio)
 }
 
-load_music :: proc(music_path: cstring) -> Music {
+load_music_stream :: proc(music_path: cstring) -> Music {
 	return rl.LoadMusicStream(music_path)
 }
 
-play_music_looped :: proc(music: Music) {
+update_music_stream :: proc(music: Music) {
+	rl.UpdateMusicStream(music)
+}
+
+play_music_stream :: proc(music: Music) {
 	rl.PlayMusicStream(music)
 }
 
-stop_music :: proc(music: Music) {
+stop_music_stream :: proc(music: Music) {
 	rl.StopMusicStream(music)
 }
 
-stop_audio :: proc(audio: Audio) {
+pause_music_stream :: proc(music: Music) {
+	rl.PauseMusicStream(music)
+}
+
+resume_music_track :: proc(music: Music) {
+	rl.ResumeMusicStream(music)
+}
+
+stop_sound :: proc(audio: Sound) {
 	rl.StopSound(audio)
 }
 
