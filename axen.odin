@@ -17,10 +17,7 @@ run :: proc(
 	update: proc(model: ^M, dt: f32),
 	render: proc(model: M),
 	settings: WindowSettings,
-) where its.type_is_struct(M) &&
-	its.type_is_struct(M) &&
-	its.type_is_struct(M) &&
-	its.type_is_struct(M) {
+) where its.type_is_struct(M) {
 
 	rl.SetConfigFlags(settings.flags)
 	rl.InitWindow(
