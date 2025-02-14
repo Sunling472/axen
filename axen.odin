@@ -13,14 +13,14 @@ WindowSettings :: struct {
 
 run :: proc(
 	model: ^$M,
-	init: proc(model: ^$m),
-	update: proc(model: ^$md, dt: f32),
-	render: proc(model: $mdl),
+	init: proc(model: ^M),
+	update: proc(model: ^M, dt: f32),
+	render: proc(model: M),
 	settings: WindowSettings,
 ) where its.type_is_struct(M) &&
-	its.type_is_struct(m) &&
-	its.type_is_struct(md) &&
-	its.type_is_struct(mdl) {
+	its.type_is_struct(M) &&
+	its.type_is_struct(M) &&
+	its.type_is_struct(M) {
 
 	rl.SetConfigFlags(settings.flags)
 	rl.InitWindow(
