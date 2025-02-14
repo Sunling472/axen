@@ -14,7 +14,7 @@ import ax "libs/axen"
 
 Model :: struct {
 	settings: ax.WindowSettings
-  ...<your any fields>
+  	...<your any fields>
 }
 
 init :: proc(m: ^Model) {}
