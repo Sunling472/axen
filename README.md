@@ -1,3 +1,5 @@
+![logo](logo.png)
+
 ### This is a fork of the Nexa library, the repository of which is deleted, apparently.
 
 The library serves as a wrapper for Raylib, making it even easier to use.
@@ -14,7 +16,7 @@ import ax "libs/axen"
 
 Model :: struct {
 	settings: ax.WindowSettings
-  	...<your any fields>
+  ...<your any fields>
 }
 
 init :: proc(m: ^Model) {}
