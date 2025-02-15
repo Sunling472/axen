@@ -4,7 +4,7 @@
 
 The library serves as a wrapper for Raylib, making it even easier to use.
 
-It uses the `init -> update -> render` algorithm, and each procedure is passed the general structure of the model, which can contain any fields. This allows you to transfer data between procedures.
+It uses the `init -> update -> render` architecture, and each procedure is passed the general structure of the model, which can contain any fields. This allows you to transfer data between procedures.
 Here is a minimal example:
 
 
