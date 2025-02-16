@@ -382,7 +382,7 @@ get_collision_side :: proc(e1, e2: Entity2D) -> CollisionSide {
 		min_overlap_x := min(overlap_left, overlap_right)
 		min_overlap_y := min(overlap_top, overlap_bottom)
 
-		// Сравниваем наименьшие перекрытия по осям X и Y
+		// Compare the smallest overlap on the X and Y axes
 		if min_overlap_x < min_overlap_y {
 			if overlap_left > 0 && overlap_right > e2.size.x {
 				return .Right
