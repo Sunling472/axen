@@ -449,6 +449,10 @@ pause_music_stream :: proc(music: Music) {
 	rl.PauseMusicStream(music)
 }
 
+is_music_stream_played :: proc(music: Music) -> bool {
+	return rl.IsMusicStreamPlaying(music)
+}
+
 resume_music_track :: proc(music: Music) {
 	rl.ResumeMusicStream(music)
 }
@@ -533,6 +537,7 @@ render_animation :: proc(
 		WHITE,
 	)
 }
+
 reset_animation :: proc(anim: ^Animation) {
 	anim.current_frame = anim.start_frame
 	anim.elapsed_time = 0.0
