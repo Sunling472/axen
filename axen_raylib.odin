@@ -453,6 +453,32 @@ is_music_stream_played :: proc(music: Music) -> bool {
 	return rl.IsMusicStreamPlaying(music)
 }
 
+get_music_lenght :: proc(music: Music) -> f32 {
+	return rl.GetMusicTimeLength(music)
+}
+
+get_music_played :: proc(music: Music) -> f32 {
+	return rl.GetMusicTimePlayed(music)
+}
+
+set_master_volume :: proc(value: f32) {
+	rl.SetMasterVolume(value)
+}
+
+get_master_volume :: proc() -> f32 {
+	return rl.GetMasterVolume()
+}
+
+master_volume_up :: proc(step: f32 = 0.10) {
+	volume := get_master_volume()
+	set_master_volume(volume + step)
+}
+
+master_volume_down :: proc(step: f32 = 0.10) {
+	volume := get_master_volume()
+	set_master_volume(volume - step)
+}
+
 resume_music_track :: proc(music: Music) {
 	rl.ResumeMusicStream(music)
 }
