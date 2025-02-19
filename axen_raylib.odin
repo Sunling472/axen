@@ -449,6 +449,10 @@ pause_music_stream :: proc(music: Music) {
 	rl.PauseMusicStream(music)
 }
 
+seek_music_stream :: proc(music: Music, position: f32) {
+	rl.SeekMusicStream(music, position)
+}
+
 is_music_stream_played :: proc(music: Music) -> bool {
 	return rl.IsMusicStreamPlaying(music)
 }
