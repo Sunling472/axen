@@ -271,7 +271,7 @@ toggle_borderless :: proc() {
 }
 
 text_format :: proc(format: cstring, args: ..any) -> cstring {
-	return rl.TextFormat(format, args)
+	return rl.TextFormat(format, ..args)
 }
 
 maximize_window :: proc() {
