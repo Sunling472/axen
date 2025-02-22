@@ -270,6 +270,10 @@ toggle_borderless :: proc() {
 	rl.ToggleBorderlessWindowed()
 }
 
+text_format :: proc(format: cstring, args: ..any) -> cstring {
+	return rl.TextFormat(format, args)
+}
+
 maximize_window :: proc() {
 	rl.MaximizeWindow()
 }
@@ -306,10 +310,12 @@ load_texture :: proc(file_path: cstring) -> Texture2D {
 	return texture
 }
 
-load_font :: proc(font_path: cstring, font_size: i32) -> Font {
-	font := rl.LoadFontEx(font_path, font_size, nil, 250)
+load_font :: proc(path: cstring, size: i32) -> Font {
+	return rl.LoadFontEx(path, size, nil, 250)
+}
 
-	return font
+load_font_ex :: proc(path: cstring, size: i32, codepoints: [^]rune, codepoints_count: i32) -> Font {
+	return rl.LoadFontEx(path, size, codepoints, codepoints_count)
 }
 
 get_key_pressed :: proc() -> Keys {
@@ -431,6 +437,10 @@ play_sound :: proc(audio: Sound) {
 
 load_music_stream :: proc(music_path: cstring) -> Music {
 	return rl.LoadMusicStream(music_path)
+}
+
+unload_music_stream :: proc(music: Music) {
+	rl.UnloadMusicStream(music)
 }
 
 update_music_stream :: proc(music: Music) {
