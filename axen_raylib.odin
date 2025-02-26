@@ -106,6 +106,7 @@ Rectangle :: rl.Rectangle
 Entity2D :: struct {
 	pos:   Vector2,
 	size:  Vector2,
+	vel:   Vector2,
 	color: Color,
 	speed: f32,
 }
@@ -314,7 +315,12 @@ load_font :: proc(path: cstring, size: i32) -> Font {
 	return rl.LoadFontEx(path, size, nil, 250)
 }
 
-load_font_ex :: proc(path: cstring, size: i32, codepoints: [^]rune, codepoints_count: i32) -> Font {
+load_font_ex :: proc(
+	path: cstring,
+	size: i32,
+	codepoints: [^]rune,
+	codepoints_count: i32,
+) -> Font {
 	return rl.LoadFontEx(path, size, codepoints, codepoints_count)
 }
 
