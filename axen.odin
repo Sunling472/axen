@@ -2,6 +2,7 @@ package axen
 
 import its "base:intrinsics"
 import rl "vendor:raylib"
+import clay "libs/clay-odin"
 
 WindowSettings :: struct {
 	width:  i32,
@@ -11,13 +12,24 @@ WindowSettings :: struct {
 	flags:  rl.ConfigFlags,
 }
 
+Settings :: struct {
+	window: WindowSettings,
+	layout: clay.ClayArray(clay.RenderCommand)
+}
+
 run :: proc(
 	model: ^$M,
 	init: proc(model: ^M),
 	update: proc(model: ^M, dt: f32),
 	render: proc(model: M),
-	settings: WindowSettings,
+	settings: Settings,
 ) where its.type_is_struct(M) {
+
+	minMemorySize: c.size_t = cast(c.size_t)clay.MinMemorySize()
+    memory := make([^]u8, minMemorySize)
+    arena: clay.Arena = clay.CreateArenaWithCapacityAndMemory(minMemorySize, memory)
+    clay.Initialize(arena, {cast(f32)raylib.GetScreenWidth(), cast(f32)raylib.GetScreenHeight()}, { handler = errorHandler })
+    clay.SetMeasureTextFunction(measure_text, nil)
 
 	rl.SetConfigFlags(settings.flags)
 	rl.InitWindow(
@@ -34,7 +46,12 @@ run :: proc(
 		dt := rl.GetFrameTime()
 		update(model, dt)
 
+		clay.SetPointerState(transmute(clay.Vector2)raylib.GetMousePosition(), raylib.IsMouseButtonDown(raylib.MouseButton.LEFT))
+        clay.UpdateScrollContainers(false, transmute(clay.Vector2)raylib.GetMouseWheelMoveV(), raylib.GetFrameTime())
+        clay.SetLayoutDimensions({cast(f32)raylib.GetScreenWidth(), cast(f32)raylib.GetScreenHeight()})
+		
 		rl.BeginDrawing()
+		clay_raylib_render(settings.layout)
 		render(model^)
 		rl.EndDrawing()
 
