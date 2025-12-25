@@ -28,7 +28,7 @@ run :: proc(
 	minMemorySize: c.size_t = cast(c.size_t)clay.MinMemorySize()
     memory := make([^]u8, minMemorySize)
     arena: clay.Arena = clay.CreateArenaWithCapacityAndMemory(minMemorySize, memory)
-    clay.Initialize(arena, {cast(f32)raylib.GetScreenWidth(), cast(f32)raylib.GetScreenHeight()}, { handler = errorHandler })
+    clay.Initialize(arena, {cast(f32)rl.GetScreenWidth(), cast(f32)rl.GetScreenHeight()}, { handler = errorHandler })
     clay.SetMeasureTextFunction(measure_text, nil)
 
 	rl.SetConfigFlags(settings.flags)
@@ -46,9 +46,9 @@ run :: proc(
 		dt := rl.GetFrameTime()
 		update(model, dt)
 
-		clay.SetPointerState(transmute(clay.Vector2)raylib.GetMousePosition(), raylib.IsMouseButtonDown(raylib.MouseButton.LEFT))
-        clay.UpdateScrollContainers(false, transmute(clay.Vector2)raylib.GetMouseWheelMoveV(), raylib.GetFrameTime())
-        clay.SetLayoutDimensions({cast(f32)raylib.GetScreenWidth(), cast(f32)raylib.GetScreenHeight()})
+		clay.SetPointerState(transmute(clay.Vector2)rl.GetMousePosition(), rl.IsMouseButtonDown(rl.MouseButton.LEFT))
+        clay.UpdateScrollContainers(false, transmute(clay.Vector2)rl.GetMouseWheelMoveV(), rl.GetFrameTime())
+        clay.SetLayoutDimensions({cast(f32)rl.GetScreenWidth(), cast(f32)rl.GetScreenHeight()})
 		
 		rl.BeginDrawing()
 		clay_raylib_render(settings.layout)
